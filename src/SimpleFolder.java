@@ -137,7 +137,7 @@ public class SimpleFolder {
 		if(removeUsr == null) throw new IllegalArgumentException();
 		boolean hasWritePrivilege = false;
 		for(Access access : allowedUsers) {
-			if(access.getUser() == removeUsr && access.getAccessType() == 'w')
+			if(access.getUser().equals(removeUsr) && access.getAccessType() == 'w')
 				hasWritePrivilege = true;
 			if(!hasWritePrivilege) return false;
 		}
