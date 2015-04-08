@@ -7,53 +7,55 @@ public class User {
 	private ArrayList<SimpleFolder> folders;//list of folder owned by user.
 
 	public User(String name) {
-		//TODO
+		this.name= name;
+		files = new ArrayList<>();
+		folders = new ArrayList<>();
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		//TODO		
-		return false;
+		if(obj == null) return false;
+		if(!(obj instanceof User)) return false;
+		return ((User) obj).getName().equals(this.getName());
 	}
 
 	//returns the name of the user.
 	public String getName() {
-		//TODO
-		return null;
+		return name;
 	}
 
 	//returns the list of files owned by the user.
 	public ArrayList<SimpleFile> getFiles() {
-		//TODO
-		return null;
+		return files;
 	}
 
 	//adds the file to the list of files owned by the user.
 	public void addFile(SimpleFile newfile) {
-		//TODO
+		if(newfile == null) throw new IllegalArgumentException("newfile");
+		files.add(newfile);
 	} 
 	
 	//removes the file from the list of owned files of the user.
 	public boolean removeFile(SimpleFile rmFile){
-		//TODO
-		return false;
+		if(rmFile == null) throw new IllegalArgumentException("rmFile");
+		return files.remove(rmFile);
 	}
 
 	//returns the list of folders owned by the user.
 	public ArrayList<SimpleFolder> getFolders() {
-		//TODO
-		return null;
+		return folders;
 	}
 
 	//adds the folder to the list of folders owned by the user.
 	public void addFolder(SimpleFolder newFolder) {
-		//TODO
+		if(newFolder == null) throw new IllegalArgumentException("newFolder");
+		folders.add(newFolder);
 	}
 
 	//removes the folder from the list of folders owned by the user.
 	public boolean removeFolder(SimpleFolder rmFolder){
-		//TODO
-		return false;
+		if(rmFolder == null) throw new IllegalArgumentException("rmFolder");
+		return folders.remove(rmFolder);
 	}
 	
 	//returns the string representation of the user object.
