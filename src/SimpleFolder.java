@@ -12,6 +12,8 @@ public class SimpleFolder {
 
 	public SimpleFolder(String name, String path, SimpleFolder parent, User owner) {
 		if(name == null) throw new IllegalArgumentException("name");
+		//Check if name is valid based on an alphanumeric regex
+		if(!name.matches("[A-Za-z0-9]+")) throw new IllegalArgumentException("name");
 		if(path == null) throw new IllegalArgumentException("path");
 		if(parent == null) throw new IllegalArgumentException("parent");
 		if(owner == null) throw new IllegalArgumentException("owner");

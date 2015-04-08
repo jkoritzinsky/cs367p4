@@ -7,6 +7,9 @@ public class User {
 	private ArrayList<SimpleFolder> folders;//list of folder owned by user.
 
 	public User(String name) {
+		if(name == null) throw new IllegalArgumentException("name");
+		//Check if name is valid based on an alphanumeric regex
+		if(!name.matches("[A-Za-z0-9]+")) throw new IllegalArgumentException("name");
 		this.name= name;
 		files = new ArrayList<>();
 		folders = new ArrayList<>();
