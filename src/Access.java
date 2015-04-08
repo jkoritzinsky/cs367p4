@@ -5,21 +5,23 @@ public class Access {
 	private char accessType;
 	
 	public Access(User user, char accessType) {
-		//TODO
+		if(user == null) throw new IllegalArgumentException("user");
+		if(accessType != 'r' && accessType !='w') throw new IllegalArgumentException("accessType");
+		this.user = user;
+		this.accessType = accessType;
 	}
 
 	public User getUser() {
-		//TODO
-		return null;
+		return user;
 	}
 
 	public char getAccessType() {
-		//TODO
-		return ' ';
+		return accessType;
 	}
 
 	public void setAccessType(char accessType) {
-		//TODO
+		if(accessType != 'r' && accessType !='w') throw new IllegalArgumentException("accessType");
+		this.accessType = accessType;
 	}
 	
 	@Override
