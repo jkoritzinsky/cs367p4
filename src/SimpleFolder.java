@@ -11,21 +11,40 @@ public class SimpleFolder {
 	private ArrayList<Access> allowedUsers;
 
 	public SimpleFolder(String name, String path, SimpleFolder parent, User owner) {
-		//TODO
+		if(name == null) throw new IllegalArgumentException("name");
+		if(path == null) throw new IllegalArgumentException("path");
+		if(parent == null) throw new IllegalArgumentException("parent");
+		if(owner == null) throw new IllegalArgumentException("owner");
+		this.name = name;
+		this.path = path;
+		this.parent = parent;
+		this.owner = owner;
+		subFolders = new ArrayList<>();
+		files = new ArrayList<>();
+		allowedUsers = new ArrayList<>();
+		allowedUsers.add(new Access(owner, 'w'));
+		if(!owner.equals(new User("admin"))) allowedUsers.add(new Access(new User("admin"), 'w'));
+		owner.addFolder(this);
 	}
 	
 	
 	//checks if user - "name" is allowed to access this folder or not. 
 	//If yes, return true, otherwise false.
 	public boolean containsAllowedUser(String name){
-		//TODO
+		for(Access user : allowedUsers) {
+			if(user.getUser().getName().equals(name))
+				return true;
+		}
 		return false;
 	}
 
 	//checks if this folder contains the child folder identified by 'fname'.
 	// If it does contain then it returns the folder otherwise returns null.
 	public SimpleFolder getSubFolder(String fname){
-		//TODO
+		for(SimpleFolder folder : subFolders) {
+			if(folder.getName().equals(fname))
+				return folder;
+		}
 		return null;
 	}
 
@@ -33,83 +52,95 @@ public class SimpleFolder {
 	//checks if this folder contains the child file identified by "fname".
 	// If it does contain, return File otherwise null.
 	public SimpleFile getFile(String fname){
-		//TODO
+		for(SimpleFile file : files) {
+			if(file.getName().equals(fname))
+				return file;
+		}
 		return null;
 	}
 
 
 	//returns the owner of the folder.
 	public User getOwner() {
-		//TODO
-		return null;
+		return owner;
 	}
 
 	//returns the name of the folder.
 	public String getName() {
-		//TODO
-		return null;
+		return name;
 	}
 
 	//returns the path of this folder.
 	public String getPath() {
-		//TODO
-		return null;
+		return path;
 	}
 
 	//returns the Parent folder of this folder.
 	public SimpleFolder getParent() {
-		//TODO
-		return null;
+		return parent;
 	}
 
 	//returns the list of all folders contained in this folder.
 	public ArrayList<SimpleFolder> getSubFolders() {
-		//TODO
-		return null;
+		return subFolders;
 	}
 
 	//adds a folder into this folder.
 	public void addSubFolder(SimpleFolder subFolder) {
-		//TODO
+		if(subFolder == null) throw new IllegalArgumentException("subFolder");
+		subFolders.add(subFolder);
 	}
 
 	//adds a folder into this folder.
 	public void addSubFolder(String name, SimpleFolder parent, User owner){
-		//TODO
+		if(name == null) throw new IllegalArgumentException("name");
+		if(parent == null) throw new IllegalArgumentException("parent");
+		if(owner == null) throw new IllegalArgumentException("owner");
+		addSubFolder(new SimpleFolder(name, parent.getPath() + '/' + parent.getName(), parent, owner));
 	}
 
 	//returns the list of files contained in this folder.
 	public ArrayList<SimpleFile> getFiles() {
-		//TODO
-		return null;
+		return files;
 	}
 
 	//add the file to the list of files contained in this folder.
 	public void addFile(SimpleFile file) {
-		//TODO
+		if(file == null) throw new IllegalArgumentException("file");
+		files.add(file);
 	}
 
 	//returns the list of allowed user to this folder.
 	public ArrayList<Access> getAllowedUsers() {
-		//TODO
-		return null;
+		return allowedUsers;
 	}
 
 	//adds another user to the list of allowed user of this folder.
 	public void  addAllowedUser(Access allowedUser) {
-		//TODO
+		if(allowedUser == null) throw new IllegalArgumentException("allowedUser");
+		allowedUsers.add(allowedUser);
 	}
 
 	//adds a list of allowed user to this folder.
 	public void addAllowedUser(ArrayList<Access> allowedUser) {
-		//TODO
+		if(allowedUser == null) throw new IllegalArgumentException("allowedUser");
+		for(Access user : allowedUser) {
+			addAllowedUser(user);
+		}
 	}
 
 	//If the user is owner of this folder or the user is admin or the user has 'w' privilege
 	//, then delete this folder along with all its content.
 	public boolean removeFolder(User removeUsr){
-		//TODO
-		return false;
+		if(removeUsr == null) throw new IllegalArgumentException();
+		boolean hasWritePrivilege = false;
+		for(Access access : allowedUsers) {
+			if(access.getUser() == removeUsr && access.getAccessType() == 'w')
+				hasWritePrivilege = true;
+			if(!hasWritePrivilege) return false;
+		}
+		//TODO implement recursive file/folder removal
+		return true;
 	}
 
 
