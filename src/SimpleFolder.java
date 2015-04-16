@@ -141,7 +141,18 @@ public class SimpleFolder {
 				hasWritePrivilege = true;
 			if(!hasWritePrivilege) return false;
 		}
-		//TODO implement recursive file/folder removal
+		User pseudoAdmin = new User("admin"); // Create fake admin user for file and folder removal
+		// Remove files
+		while(!files.isEmpty()) {
+			files.get(0).removeFile(pseudoAdmin);
+		}
+		// Recursively remove folders
+		while(!subFolders.isEmpty()) {
+			subFolders.get(0).removeFolder(pseudoAdmin);
+		}
+		// Remove this folder from its parent and the owner's owned folders
+		parent.getSubFolders().remove(this);
+		owner.getFolders().remove(this);
 		return true;
 	}
 

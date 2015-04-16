@@ -101,7 +101,8 @@ public class SimpleFile {
 				hasWritePrivilege = true;
 			if(!hasWritePrivilege) return false;
 		}
-		//TODO implement file removal
+		parent.getFiles().remove(this);
+		owner.getFiles().remove(this);
 		return true;
 	}
 	
