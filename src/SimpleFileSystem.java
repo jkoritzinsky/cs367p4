@@ -12,31 +12,41 @@ public class SimpleFileSystem {
 
 	//constructor
 	public SimpleFileSystem(SimpleFolder _root, ArrayList<User> _users) {
-		//TODO
+		root = _root;
+		users = _users;
+		setCurrentUser("admin");
 	}
 
 	// resets current user to admin and current location to root
 	public void reset(){
-		//TODO
+		setCurrentUser("admin");
 	}
 
 
 	//gets currUser.
 	public User getCurrUser() {
-		//TODO
-		return null;
+		return currUser;
 	}
 
 	//sets the current user to the user with name passed in the argument.
 	public boolean setCurrentUser(String name){
-		//TODO
-		return false;
+		if(name == null) throw new IllegalArgumentException("name");
+		User newUser = containsUser(name);
+		if(newUser == null) return false;
+		currUser = newUser;
+		currLoc = root;
+		return true;
 	}
 
 
 	//checks if the user is contained in the existing users list or not.
 	public User containsUser(String name){
-		//TODO
+		if(name == null) throw new IllegalArgumentException("name");
+		for(User user : users) {
+			if(user.getName().equals(name)) {
+				return user;
+			}
+		}
 		return null;
 	}
 	
@@ -57,15 +67,24 @@ public class SimpleFileSystem {
 
 	
 	//returns the currentlocation.path + currentlocation.name.
+	// Implemented by CS instructors/TAs
 	public String getPWD(){
-		//TODO
-		return null;
-	}//return of getPWD method
+		return ((currLoc.getPath().isEmpty()?"":(currLoc.getPath()+"/"))+currLoc.getName());
+	}
+		
 
 
 	//deletes the folder/file identified by the 'name'
 	public boolean remove(String name){
-		//TODO
+		if(name == null) throw new IllegalArgumentException("name");
+		SimpleFile file = currLoc.getFile(name);
+		if(file != null) {
+			return file.removeFile(currUser);
+		}
+		SimpleFolder folder = currLoc.getSubFolder(name);
+		if(folder != null) {
+			return folder.removeFolder(currUser);
+		}
 		return false;
 	}
 
@@ -88,7 +107,8 @@ public class SimpleFileSystem {
 
 	//makes a new folder under the current folder with owner = current user.
 	public void mkdir(String name){
-		//TODO
+		if(name == null) throw new IllegalArgumentException("name");
+		currLoc.addSubFolder(name, currLoc, currUser);
 	}
 
 
@@ -99,8 +119,38 @@ public class SimpleFileSystem {
 
 
 	//prints all the folders and files under the current user for which user has access.
+	//Implemented by CS instructors/TAs
 	public void printAll(){
-		//TODO
+		for(SimpleFile f : currLoc.getFiles()){
+			if(f.containsAllowedUser(currUser.getName()))
+			{
+				System.out.print(f.getName() + "." + f.getExtension().toString() + " : " + f.getOwner().getName() + " : ");
+				for(int i =0; i<f.getAllowedUsers().size(); i++){
+					Access a = f.getAllowedUsers().get(i);
+					System.out.print("("+a.getUser().getName() + "," + a.getAccessType() + ")");
+					if(i<f.getAllowedUsers().size()-1){
+						System.out.print(",");
+					}
+				}
+				System.out.println();
+			}
+		}
+		for(SimpleFolder f: currLoc.getSubFolders()){
+			if(f.containsAllowedUser(currUser.getName()))
+			{
+				System.out.print(f.getName() + " : " + f.getOwner().getName() + " : ");
+				for(int i =0; i<f.getAllowedUsers().size(); i++){
+					Access a = f.getAllowedUsers().get(i);
+					System.out.print("("+a.getUser().getName() + "," + a.getAccessType() + ")");
+					if(i<f.getAllowedUsers().size()-1){
+						System.out.print(",");
+					}
+				}
+				System.out.println();
+			}
+		}
+		
+
 	}
 
 }
