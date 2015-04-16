@@ -1,6 +1,10 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 
 public class SimpleFileSystem {
@@ -61,8 +65,47 @@ public class SimpleFileSystem {
 
 	//changes the current location. If successful returns true, false otherwise.
 	public boolean moveLoc(String argument){
-		//TODO
-		return false;
+		if(argument == null) throw new IllegalArgumentException("argument");
+		boolean absolutePath = argument.charAt(0) == '/';
+		String[] pathParts;
+		SimpleFolder newLoc;
+		if(absolutePath) {
+			pathParts = argument.substring(1).split("/");
+			if(pathParts[0].equals(root.getName())) {
+				newLoc = root;
+			}
+			else return false;
+		}
+		else {
+			pathParts = argument.split("/");
+			newLoc = currLoc;
+		}
+		boolean skippedFirstPart = false;
+		for(String part : Arrays.asList(pathParts)) {
+			if(absolutePath && !skippedFirstPart) {
+				skippedFirstPart = true;
+				continue;
+			}
+			if(part.equals("..")) {
+				if(newLoc == root) return false;
+				newLoc = newLoc.getParent();
+			}
+			else {
+				newLoc = newLoc.getSubFolder(part);
+				if(newLoc == null) throw new IllegalArgumentException("argument");
+				ArrayList<Access> userAccessRules = newLoc.getAllowedUsers();
+				boolean canAccess = false;
+				for(Access accessRule : userAccessRules) {
+					if(accessRule.getUser().equals(currUser)) {
+						canAccess = true;
+						break;
+					}
+				}
+				if(!canAccess) throw new IllegalArgumentException("argument");
+			}
+		}
+		currLoc = newLoc;
+		return true;
 	}
 
 	
