@@ -57,8 +57,7 @@ public class SimpleFileSystem {
 	
 	//checks whether curr location contains any file/folder with name name = fname
 	public boolean containsFileFolder(String fname){
-		//TODO
-		return false;
+		return currLoc.getFile(fname) != null || currLoc.getSubFolder(fname) != null; 
 	}
 	
 
@@ -139,15 +138,37 @@ public class SimpleFileSystem {
 	//Gives the access 'permission' of the file/folder fname to the user if the 
 	//current user is the owner of the fname. If succeed, return true, otherwise false.
 	public boolean addUser(String fname, String username, char permission){
-		//TODO
-		return false;
+		if(fname == null) throw new IllegalArgumentException("fname");
+		if(username == null) throw new IllegalArgumentException("username");
+		if(!users.contains(new User(username))) return false;
+		// Get either the file or folder named fname
+		if(fname.contains(".")) { // Is a file
+			SimpleFile file = currLoc.getFile(fname);
+			if(file == null) return false;
+			if(file.getOwner().equals(currUser)) {
+				file.addAllowedUser(new Access(users.get(users.indexOf(new User("username"))), permission));
+			}
+		}
+		else {
+			SimpleFolder folder = currLoc.getSubFolder(fname);
+			if(folder == null) return false;
+			if(folder.getOwner().equals(currUser)) {
+				folder.addAllowedUser(new Access(users.get(users.indexOf(new User("username"))), permission));
+			}
+		}
+		return true;
 	}
 
 
 	//displays the user info in the specified format.
 	public boolean printUsersInfo(){
-		//TODO
-		return false;
+		if(currUser.getName().equals("admin")) {
+			for(User user: users) {
+				System.out.println(user);
+			}
+			return true;
+		}
+		else return false;
 	}
 
 
@@ -161,7 +182,14 @@ public class SimpleFileSystem {
 
 	//makes a new file under the current folder with owner = current user.
 	public void addFile(String filename, String fileContent){
-		//TODO
+		if(filename == null || !filename.contains(".")) throw new IllegalArgumentException("filename");
+		if(fileContent == null) throw new IllegalArgumentException("fileContent");
+		String[] fileNameParts = filename.split("\\.");
+		String name = fileNameParts[0];
+		Extension extension = Enum.valueOf(Extension.class, fileNameParts[1]);
+		String path = String.join("/", currLoc.getPath(), currLoc.getName());
+		SimpleFile file = new SimpleFile(name, extension, path, fileContent, currLoc, currUser);
+		currLoc.addFile(file);
 	}
 
 
