@@ -1,10 +1,5 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 
 public class SimpleFileSystem {
@@ -153,7 +148,11 @@ public class SimpleFileSystem {
 			SimpleFolder folder = currLoc.getSubFolder(fname);
 			if(folder == null) return false;
 			if(folder.getOwner().equals(currUser)) {
-				folder.addAllowedUser(new Access(users.get(users.indexOf(new User("username"))), permission));
+				Access access = new Access(users.get(users.indexOf(new User("username"))), permission);
+				folder.addAllowedUser(access);
+				for(SimpleFile file : folder.getFiles()) {
+					file.addAllowedUser(access);
+				}
 			}
 		}
 		return true;
