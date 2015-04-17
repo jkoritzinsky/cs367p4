@@ -54,8 +54,10 @@ public class SimpleFolder {
 	//checks if this folder contains the child file identified by "fname".
 	// If it does contain, return File otherwise null.
 	public SimpleFile getFile(String fname){
+		// Use \\. because split uses regex
+		String[] splitName = fname.split("\\.");
 		for(SimpleFile file : files) {
-			if(file.getName().equals(fname))
+			if(file.getName().equals(splitName[0]) && file.getExtension().toString().toLowerCase().equals(splitName[1]))
 				return file;
 		}
 		return null;
