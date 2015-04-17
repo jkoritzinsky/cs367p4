@@ -86,13 +86,17 @@ public class SimpleFileSystem {
 				skippedFirstPart = true;
 				continue;
 			}
+			// If part is in an invalid format
+			if(!part.matches("(\\.\\.|[A-Za-z0-9]+)")) {
+				throw new IllegalArgumentException("argument");
+			}
 			if(part.equals("..")) {
 				if(newLoc == root) return false;
 				newLoc = newLoc.getParent();
 			}
 			else {
 				newLoc = newLoc.getSubFolder(part);
-				if(newLoc == null) throw new IllegalArgumentException("argument");
+				if(newLoc == null) return false;
 				ArrayList<Access> userAccessRules = newLoc.getAllowedUsers();
 				boolean canAccess = false;
 				for(Access accessRule : userAccessRules) {
@@ -101,7 +105,7 @@ public class SimpleFileSystem {
 						break;
 					}
 				}
-				if(!canAccess) throw new IllegalArgumentException("argument");
+				if(!canAccess) return false;
 			}
 		}
 		currLoc = newLoc;
