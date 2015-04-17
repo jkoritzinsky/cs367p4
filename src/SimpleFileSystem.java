@@ -58,6 +58,8 @@ public class SimpleFileSystem {
 
 
 	//changes the current location. If successful returns true, false otherwise.
+	/////////////////////////////// Message to Jeff: Catch the IllegalArgumentException from this and output the same thing
+	/////////////////////////////// as when this returns false
 	public boolean moveLoc(String argument){
 		if(argument == null) throw new IllegalArgumentException("argument");
 		boolean absolutePath = argument.charAt(0) == '/';
