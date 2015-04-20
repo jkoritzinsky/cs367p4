@@ -30,8 +30,9 @@ public class FileSystemMain {
 		catch(FileNotFoundException ex) { //if the file doesn't exist
 			System.out.println("Error: Cannot access file");
 		}
-				
+		User admin = new User("admin");
 		ArrayList<User> userObjs = new ArrayList<>();
+		userObjs.add(admin);
 		SimpleFileSystem sfs = new SimpleFileSystem(rootfolder, userObjs); //change based on input files
 		for(int i = 0; i < users.length; i++) {
 			 userObjs.add(new User(users[i]));
@@ -40,7 +41,25 @@ public class FileSystemMain {
 		for(int i = 0; i < files.size(); i++) {
 			splitFile = files.get(i).split(" ", 2);
 			String contents = splitFile.length == 2 ? splitFile[1] : "";
-			sfs.addFile(splitFile[0], contents);
+			String[] path = splitFile[0].split("/");
+			if(path.length == 2) {
+				rootfolder.addSubFolder(path[1], rootfolder, admin);
+			}
+			else {
+				SimpleFolder parent = rootfolder;
+				for(int j = 1; j < path.length - 1; ++j) {
+					parent = parent.getSubFolder(path[j]);
+				}
+				boolean isFile = path[path.length - 1].contains(".");
+				if(isFile) {
+					String[] fileNameParts = path[path.length-1].split("\\.");
+					SimpleFile file = new SimpleFile(fileNameParts[0], Extension.valueOf(fileNameParts[1]), parent.getPath() + '/' + parent.getName(), contents, parent, admin);
+					parent.addFile(file);
+				}
+				else {
+					parent.addSubFolder(path[path.length - 1], parent, admin);
+				}
+			}
 			for(int j = 0; j < users.length; j++) {
 				sfs.addUser( splitFile[0], "admin", 'w');
 				sfs.addUser(splitFile[0] , users[j], 'r');	
