@@ -1,5 +1,26 @@
+///////////////////////////////////////////////////////////////////////////////
+//                   ALL STUDENTS COMPLETE THESE SECTIONS
+// Main Class File:  FileSystemMain.java
+// File:             SimpleFolder.java
+// Semester:         CS367 Spring 2015
+//
+//
+// Author:           Jeremy Koritzinsky
+// Email:            jeremy.koritzinsky@wisc.edu
+// CS Login:         koritzinsky
+// Lecturer's Name:  Jim Skrentny
+//
+//////////////////// PAIR PROGRAMMERS COMPLETE THIS SECTION ////////////////////
+// Pair Partner:     Jeff Tucker
+// Email:            jetucker@wisc.edu
+// CS Login:         jtucker
+// Lecturer's Name:  Jim Skrentny
 import java.util.ArrayList;
-
+/**
+ * Folder on filesystem.
+ * @author Jeremy
+ * Bugs: none known
+ */
 public class SimpleFolder {
 
 	private String name;
