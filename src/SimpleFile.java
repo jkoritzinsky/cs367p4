@@ -17,6 +17,11 @@
 // Lecturer's Name:  Jim Skrentny
 import java.util.ArrayList;
 
+/**
+ * File on filesystem.
+ * @author Jeremy
+ * Bugs: none known
+ */
 public class SimpleFile {
 	private String name;
 	private Extension extension;

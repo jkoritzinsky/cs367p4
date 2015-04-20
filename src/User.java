@@ -16,7 +16,11 @@
 // CS Login:         jtucker
 // Lecturer's Name:  Jim Skrentny
 import java.util.ArrayList;
-
+/**
+ * User of filesystem.
+ * @author Jeremy
+ * Bugs: none known
+ */
 public class User {
 	
 	private String name; //name of the user.

@@ -18,7 +18,11 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
+/**
+ * Filesystem class.
+ * @author Jeremy
+ * Bugs: none known
+ */
 public class SimpleFileSystem {
 
 	SimpleFolder root;

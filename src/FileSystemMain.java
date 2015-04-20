@@ -32,6 +32,11 @@ import java.util.IllegalFormatException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * Main class for filesystem
+ * @author Jeff
+ * Bugs: none known
+ */
 public class FileSystemMain {
 
 	private static final Scanner scnr = new Scanner(System.in);

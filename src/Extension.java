@@ -15,6 +15,12 @@
 // Email:            jetucker@wisc.edu
 // CS Login:         jtucker
 // Lecturer's Name:  Jim Skrentny
+
+/**
+ * File extensions
+ * @author Jeremy
+ * Bugs: none known
+ */
 public enum Extension {
 	txt, doc, rtf
 }

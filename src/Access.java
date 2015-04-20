@@ -15,6 +15,12 @@
 // Email:            jetucker@wisc.edu
 // CS Login:         jtucker
 // Lecturer's Name:  Jim Skrentny
+
+/**
+ * Permissions record on filesystem.
+ * @author Jeremy
+ * Bugs: none known
+ */
 public class Access {
 	
 	private User user;

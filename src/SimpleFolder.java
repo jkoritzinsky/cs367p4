@@ -16,7 +16,11 @@
 // CS Login:         jtucker
 // Lecturer's Name:  Jim Skrentny
 import java.util.ArrayList;
-
+/**
+ * Folder on filesystem.
+ * @author Jeremy
+ * Bugs: none known
+ */
 public class SimpleFolder {
 
 	private String name;
