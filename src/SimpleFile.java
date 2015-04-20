@@ -27,6 +27,7 @@ public class SimpleFile {
 		allowedUsers = new ArrayList<>();
 		allowedUsers.add(new Access(owner, 'w'));
 		if(!owner.getName().equals("admin")) allowedUsers.add(new Access(new User("admin"), 'w'));
+		owner.addFile(this);
 	}
 	
 	//returns the path variable.

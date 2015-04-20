@@ -68,6 +68,7 @@ public class FileSystemMain {
 		}
 		while(true) {
 			String[] cmds = prompt(sfs.getCurrUser() + "@CS367$ ");
+			System.out.println("hi");
 			Cmd cmd = stringToCmd(cmds[0]);
 
 			switch (cmd) {
@@ -76,6 +77,9 @@ public class FileSystemMain {
 				if(validate1(cmds)) {
 					sfs.reset();
 					System.out.println("Reset done");
+				}
+				else {
+					System.out.println("fail");
 				}
 				break;
 				//shows the present working directory
@@ -216,7 +220,7 @@ public class FileSystemMain {
 
 	private static Cmd stringToCmd(String strCmd) {
 		try {
-			return Cmd.valueOf(strCmd.toUpperCase().trim());
+			return Cmd.valueOf(strCmd.toLowerCase().trim());
 		}
 		catch (IllegalArgumentException e){
 			return Cmd.x;
