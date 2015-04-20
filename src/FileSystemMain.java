@@ -183,11 +183,14 @@ public class FileSystemMain {
 				break;
 				//creates a file
 			case mkfile:
-				if(validate2(cmds)) {
-					if(true) { 
-						sfs.addFile(cmds[1], cmds[2]); 
+				if(validateMkfile(cmds)) {
+					if(cmds[1].contains(".")) { 
+						sfs.addFile(cmds[1], cmds[2]);
+						System.out.println(cmds[1] + " added");
 					}
-					System.out.println(cmds[1] + " added");
+					else {
+						System.out.println("Invalid file name");
+					}
 				}
 				break;
 				//shares access to a file or folder with a specified user
@@ -245,6 +248,15 @@ public class FileSystemMain {
 		System.out.println("One Argument Needed");
 		return false;
 	} 
+	
+	private static boolean validateMkfile(String [] cmds) {
+		if(cmds.length == 3) {
+			return true;
+		}
+		System.out.println("Two Arguments Needed");
+		return false;
+	}
+	
 	private static boolean validate3(String[] cmds) { 
 		if(cmds.length == 2) { //only two because cmds is taken from only the last item of the string[]
 			return true;
