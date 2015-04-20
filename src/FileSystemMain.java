@@ -178,10 +178,11 @@ public class FileSystemMain {
 				break;
 				//creates a file
 			case mkfile:
-				if(validate2(cmds)) {
-					if(true) { 
-						sfs.addFile(cmds[1], cmds[2]); 
+				if(validate3(cmds)) {
+					if(cmds[2] == null) { 	
+						cmds[2] = "";
 					}
+						sfs.addFile(cmds[1], cmds[2]); 
 					System.out.println(cmds[1] + " added");
 				}
 				break;
