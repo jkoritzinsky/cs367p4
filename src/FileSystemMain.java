@@ -98,7 +98,7 @@ public class FileSystemMain {
 			}
 		}
 		while(true) {
-			String[] cmds = prompt(sfs.getCurrUser() + "@CS367$ ");
+			String[] cmds = prompt(sfs.getCurrUser().getName() + "@CS367$ ");
 			Cmd cmd = stringToCmd(cmds[0]);
 
 			switch (cmd) {
