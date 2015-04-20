@@ -74,8 +74,11 @@ public class FileSystemMain {
 			splitFile = files.get(i).split(" ", 2);
 			String contents = splitFile.length == 2 ? splitFile[1] : "";
 			String[] path = splitFile[0].split("/");
+			SimpleFile file = null;
+			SimpleFolder folder = null;
 			if(path.length == 2) {
 				rootfolder.addSubFolder(path[1], rootfolder, admin);
+				folder = rootfolder.getSubFolder(path[1]);
 			}
 			else {
 				SimpleFolder parent = rootfolder;
@@ -85,16 +88,18 @@ public class FileSystemMain {
 				boolean isFile = path[path.length - 1].contains(".");
 				if(isFile) {
 					String[] fileNameParts = path[path.length-1].split("\\.");
-					SimpleFile file = new SimpleFile(fileNameParts[0], Extension.valueOf(fileNameParts[1]), parent.getPath() + '/' + parent.getName(), contents, parent, admin);
+					file = new SimpleFile(fileNameParts[0], Extension.valueOf(fileNameParts[1]), parent.getPath() + '/' + parent.getName(), contents, parent, admin);
 					parent.addFile(file);
 				}
 				else {
 					parent.addSubFolder(path[path.length - 1], parent, admin);
+					folder = parent.getSubFolder(path[path.length - 1]);
 				}
 			}
-			for(int j = 0; j < users.length; j++) {
-				sfs.addUser( splitFile[0], "admin", 'w');
-				sfs.addUser(splitFile[0] , users[j], 'r');
+			for(int j = 0; j < userObjs.size(); j++) {
+				if(file != null) file.addAllowedUser(new Access(userObjs.get(j), 'r'));
+				if(folder != null) folder.addAllowedUser(new Access(userObjs.get(j), 'r'));
+				
 			}
 		}
 		while(true) {
@@ -178,12 +183,14 @@ public class FileSystemMain {
 				break;
 				//creates a file
 			case mkfile:
-				if(validate3(cmds)) {
-					if(cmds[2] == null) { 	
-						cmds[2] = "";
+				if(validateMkfile(cmds)) {
+					if(cmds[1].contains(".")) { 
+						sfs.addFile(cmds[1], cmds[2]);
+						System.out.println(cmds[1] + " added");
 					}
-						sfs.addFile(cmds[1], cmds[2]); 
-					System.out.println(cmds[1] + " added");
+					else {
+						System.out.println("Invalid file name");
+					}
 				}
 				break;
 				//shares access to a file or folder with a specified user
@@ -241,6 +248,15 @@ public class FileSystemMain {
 		System.out.println("One Argument Needed");
 		return false;
 	} 
+	
+	private static boolean validateMkfile(String [] cmds) {
+		if(cmds.length == 3) {
+			return true;
+		}
+		System.out.println("Two Arguments Needed");
+		return false;
+	}
+	
 	private static boolean validate3(String[] cmds) { 
 		if(cmds.length == 2) { //only two because cmds is taken from only the last item of the string[]
 			return true;
