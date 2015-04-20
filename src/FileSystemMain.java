@@ -41,17 +41,18 @@ public class FileSystemMain {
 	}
 
 	public static void main(String[] args) {	
-		
+		//Variable declarations for the information from the file
 		SimpleFolder rootfolder = null;
 		String[] users = null;
 		ArrayList<String> files = new ArrayList<String>();
+
 		try(Scanner fileScnr = new Scanner(new File(args[0]))) //A scanner for the file
 		{	
-		 rootfolder = new SimpleFolder(fileScnr.nextLine(), "", null, null);
-		 users = fileScnr.nextLine().split(", ");
-		 while(fileScnr.hasNextLine()) {
-			 files.add(fileScnr.nextLine());
-		 }
+			rootfolder = new SimpleFolder(fileScnr.nextLine(), "", null, null); //from first line
+			users = fileScnr.nextLine().split(", "); 
+			while(fileScnr.hasNextLine()) { //adds all of the files specified in later lines
+				files.add(fileScnr.nextLine());
+			}
 		}
 		catch(FileNotFoundException ex) { //if the file doesn't exist
 			System.out.println("Error: Cannot access file");
@@ -88,112 +89,125 @@ public class FileSystemMain {
 			}
 			for(int j = 0; j < users.length; j++) {
 				sfs.addUser( splitFile[0], "admin", 'w');
-				sfs.addUser(splitFile[0] , users[j], 'r');	
+				sfs.addUser(splitFile[0] , users[j], 'r');
 			}
 		}
-		String[] cmds = prompt("Enter a command");
-		Cmd cmd = stringToCmd(cmds[0]);
+		while(true) {
+			String[] cmds = prompt(sfs.getCurrUser() + "@CS367$ ");
+			Cmd cmd = stringToCmd(cmds[0]);
 
-		switch (cmd) {
-		case reset:
-			if(validate1(cmds)) {
-				sfs.reset();
-				System.out.println("Reset done");
-			}
-			break;
-		case pwd:
-			if(validate1(cmds)) {
-				System.out.println(sfs.getPWD());
-			}
-			break;
-		case ls:
-			if(validate1(cmds)) {
-				sfs.printAll();
-			}
-			break;
-		case u:
-			if(validate2(cmds)) {
-				if(sfs.setCurrentUser(cmds[1])) {							
+			switch (cmd) {
+			//resets the user to admin and location to root
+			case reset: 
+				if(validate1(cmds)) {
+					sfs.reset();
+					System.out.println("Reset done");
 				}
-				else {
-					System.out.println("user " + cmds[1] + " does not exist");
+				break;
+				//shows the present working directory
+			case pwd:
+				if(validate1(cmds)) {
+					System.out.println(sfs.getPWD());
 				}
-			}
-			break;
-		case uinfo:
-			if(validate1(cmds)) {
-				if(!sfs.printUsersInfo()) {
-					System.out.println("Insufficient privileges");
+				break;
+				//shows the folders and files available to the current user
+			case ls:
+				if(validate1(cmds)) {
+					sfs.printAll();
 				}
-			}
-			break;
-		case cd:
-			if(validate2(cmds)) {
-				try { 
-					if(sfs.moveLoc(cmds[1])) { 
-						System.out.println("Success");
+				break;
+				//changes the current user to the specified username
+			case u:
+				if(validate2(cmds)) {
+					if(sfs.setCurrentUser(cmds[1])) {							
 					}
 					else {
+						System.out.println("user " + cmds[1] + " does not exist");
+					}
+				}
+				break;
+				//displays information on the give user if the current user is admin
+			case uinfo:
+				if(validate1(cmds)) {
+					if(!sfs.printUsersInfo()) {
+						System.out.println("Insufficient privileges");
+					}
+				}
+				break;
+				//changes the location
+			case cd:
+				if(validate2(cmds)) {
+					try { 
+						if(sfs.moveLoc(cmds[1])) { 
+							System.out.println("Success");
+						}
+						else {
+							System.out.println("Invalid location passed");
+						}
+					}
+					catch (IllegalArgumentException e) {
 						System.out.println("Invalid location passed");
 					}
 				}
-				catch (IllegalArgumentException e) {
-					System.out.println("Invalid location passed");
+				break;
+				//removes the specified file or folder
+			case rm:
+				if(validate2(cmds)) {
+					if(sfs.remove(cmds[1])) {
+						System.out.println(cmds[1] + " removed");
+					}
+					else {
+						System.out.println("Insufficient privilage");
+					}
 				}
-			}
-			break;
-		case rm:
-			if(validate2(cmds)) {
-				if(sfs.remove(cmds[1])) {
-					System.out.println(cmds[1] + " removed");
+				break;
+				//creates a directory
+			case mkdir:
+				if(validate2(cmds)) {
+					sfs.mkdir(cmds[1]);
+					System.out.println(cmds[1] + " added");
 				}
-				else {
-					System.out.println("Insufficient privilage");
+				break;
+				//creates a file
+			case mkfile:
+				if(validate2(cmds)) {
+					if(true) { 
+						sfs.addFile(cmds[1], cmds[2]); 
+					}
+					System.out.println(cmds[1] + " added");
 				}
-			}
-			break;
-		case mkdir:
-			if(validate2(cmds)) {
-				sfs.mkdir(cmds[1]);
-				System.out.println(cmds[1] + " added");
-			}
-			break;
-		case mkfile:
-			if(validate2(cmds)) {
-				if(true) { 
-					sfs.addFile(cmds[1], cmds[2]); 
-				}
-				System.out.println(cmds[1] + " added");
-			}
-			break;
-		case sh:
-			String[] words2 = cmds[2].split(" ");
-			if(validate3(words2)) {
-				char c = words2[1].charAt(0);
-				if(c == 'r' || c == 'w') {
-					if(sfs.containsUser(words2[0]) != null) {
-						if (sfs.containsFileFolder(cmds[1])) { 
-							if(sfs.addUser(cmds[1], cmds[2], cmds[3].charAt(0))) {
-								System.out.println("Privilage granted");
+				break;
+				//shares access to a file or folder with a specified user
+			case sh:
+				String[] words2 = cmds[2].split(" ");
+				if(validate3(words2)) {
+					char c = words2[1].charAt(0);
+					if(c == 'r' || c == 'w') {
+						if(sfs.containsUser(words2[0]) != null) {
+							if (sfs.containsFileFolder(cmds[1])) { 
+								if(sfs.addUser(cmds[1], cmds[2], cmds[3].charAt(0))) {
+									System.out.println("Privilage granted");
+								}
+							}
+							else { 
+								System.out.println("Invalid file/folder name");
 							}
 						}
 						else { 
-							System.out.println("Invalid file/folder name");
+							System.out.println("Invalid user");
 						}
 					}
-					else { 
-						System.out.println("Invalid user");
+					else {
+						System.out.println("Invalid permission type");
 					}
 				}
-				else {
-					System.out.println("Invalid permission type");
-				}
+				break;
+				//exits the program
+			case x:
+				System.exit(0);
+			default:
+				System.out.println("Invalid Command");
 			}
-			break;
-		case x:
-			System.exit(0);
-		default:
-			System.out.println("Usage: java FileSystemMain FileName"); //fix with real thing
 		}
 	}
 
