@@ -16,7 +16,7 @@ public class SimpleFolder {
 		if(!name.matches("[A-Za-z0-9]+")) throw new IllegalArgumentException("name");
 		if(path == null) throw new IllegalArgumentException("path");
 		// No null check for parent b/c parent of root is null
-		if(owner == null) throw new IllegalArgumentException("owner");
+		// No null check for owner b/c owner of root is null
 		this.name = name;
 		this.path = path;
 		this.parent = parent;
@@ -24,9 +24,11 @@ public class SimpleFolder {
 		subFolders = new ArrayList<>();
 		files = new ArrayList<>();
 		allowedUsers = new ArrayList<>();
-		allowedUsers.add(new Access(owner, 'w'));
-		if(!owner.equals(new User("admin"))) allowedUsers.add(new Access(new User("admin"), 'w'));
-		owner.addFolder(this);
+		if(owner != null) {
+			allowedUsers.add(new Access(owner, 'w'));
+			if(!owner.equals(new User("admin"))) allowedUsers.add(new Access(new User("admin"), 'w'));
+			owner.addFolder(this);
+		}
 	}
 	
 	

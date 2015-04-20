@@ -1,4 +1,9 @@
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.IllegalFormatException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class FileSystemMain {
@@ -10,9 +15,37 @@ public class FileSystemMain {
 	}
 
 	public static void main(String[] args) {	
-
-		SimpleFileSystem sfs = new SimpleFileSystem(null, null); //change based on input file
-
+		
+		SimpleFolder rootfolder = null;
+		String[] users = null;
+		ArrayList<String> files = new ArrayList<String>();
+		try(Scanner fileScnr = new Scanner(new File(args[0]))) //A scanner for the file
+		{	
+		 rootfolder = new SimpleFolder(fileScnr.nextLine(), "", null, null);
+		 users = fileScnr.nextLine().split(", ");
+		 while(fileScnr.hasNextLine()) {
+			 files.add(fileScnr.nextLine());
+		 }
+		}
+		catch(FileNotFoundException ex) { //if the file doesn't exist
+			System.out.println("Error: Cannot access file");
+		}
+				
+		ArrayList<User> userObjs = new ArrayList<>();
+		SimpleFileSystem sfs = new SimpleFileSystem(rootfolder, userObjs); //change based on input files
+		for(int i = 0; i < users.length; i++) {
+			 userObjs.add(new User(users[i]));
+		 }
+		 String[] splitFile = null;
+		for(int i = 0; i < files.size(); i++) {
+			splitFile = files.get(i).split(" ", 2);
+			String contents = splitFile.length == 2 ? splitFile[1] : "";
+			sfs.addFile(splitFile[0], contents);
+			for(int j = 0; j < users.length; j++) {
+				sfs.addUser( splitFile[0], "admin", 'w');
+				sfs.addUser(splitFile[0] , users[j], 'r');	
+			}
+		}
 		String[] cmds = prompt("Enter a command");
 		Cmd cmd = stringToCmd(cmds[0]);
 
@@ -66,7 +99,12 @@ public class FileSystemMain {
 			break;
 		case rm:
 			if(validate2(cmds)) {
-				sfs.remove(cmds[1]);
+				if(sfs.remove(cmds[1])) {
+					System.out.println(cmds[1] + " removed");
+				}
+				else {
+					System.out.println("Insufficient privilage");
+				}
 			}
 			break;
 		case mkdir:
@@ -77,13 +115,34 @@ public class FileSystemMain {
 			break;
 		case mkfile:
 			if(validate2(cmds)) {
-				sfs.addFile(cmds[1], cmds[2]); 
+				if(true) { 
+					sfs.addFile(cmds[1], cmds[2]); 
+				}
 				System.out.println(cmds[1] + " added");
 			}
 			break;
 		case sh:
-			if(validate3(cmds)) {
-				sfs.addUser(cmds[1], cmds[2], cmds[3].charAt(0)); //maybe fix
+			String[] words2 = cmds[2].split(" ");
+			if(validate3(words2)) {
+				char c = words2[1].charAt(0);
+				if(c == 'r' || c == 'w') {
+					if(sfs.containsUser(words2[0]) != null) {
+						if (sfs.containsFileFolder(cmds[1])) { 
+							if(sfs.addUser(cmds[1], cmds[2], cmds[3].charAt(0))) {
+								System.out.println("Privilage granted");
+							}
+						}
+						else { 
+							System.out.println("Invalid file/folder name");
+						}
+					}
+					else { 
+						System.out.println("Invalid user");
+					}
+				}
+				else {
+					System.out.println("Invalid permission type");
+				}
 			}
 			break;
 		case x:
@@ -96,7 +155,7 @@ public class FileSystemMain {
 	private static String[] prompt(String prompt) {
 		System.out.print(prompt);
 		String line = scnr.nextLine();
-		String []words = line.split(" ");
+		String []words = line.split(" " , 3);
 		return words;
 	}
 
@@ -115,7 +174,7 @@ public class FileSystemMain {
 		return false;
 	} 
 	private static boolean validate3(String[] cmds) { 
-		if(cmds.length == 4) {
+		if(cmds.length == 2) { //only two because cmds is taken from only the last item of the string[]
 			return true;
 		}
 		System.out.println("Three Arguments Needed");
